@@ -1,0 +1,70 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Title</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!--css for searchable select-->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+    
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-sm navbar-light bg-dark">
+        <a class="navbar-brand" style="color: white;" href="#">Image Classifier</a>
+    </nav>
+    <br>
+    <!--Form Section Start -->
+    <section>
+        <div class="container" style="text-align: center;">
+            <div class="row">
+                <div class="col-md-4">
+                    <form action="upload_image" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="file" name="image_file" > <br><br>
+                        <button type="submit" class="btn btn-primary">Upload & Classify</button>
+                        <br>
+                        <br>
+                    </form>
+                    <!--Below form will be used to send the label to backend and train the model on it -->
+                    <form action="{% url 'upload_training_sample' %}" method="post">
+                        <b>Actual Class:</b>
+                        {% csrf_token %}
+                        <select class="class_label" name="input_class" style="width: 100%">
+                            {% for class in imagenet_classes %}
+                                <option value="{{class}}">{{class}}</option>
+                            {% endfor %}
+                        </select>
+                        <input type="text" name="file_path" value = "{{uploaded_file_url}}" hidden>
+                          <br><br>
+                        <button type="submit" class="btn btn-success">Submit Class</button>
+                    </form>
+                </div>
+                <div class="col-md-8">
+                    <label><b>Class:</b> {{img_class}}</label><br>
+                    <label><b>Confidence:</b> {{confidence}}</label>
+                    <img src="{{uploaded_file_url}}" width="100%" alt="">
+                </div>
+            </div> 
+        </div>
+    </section>  
+
+    <!--Form Section End -->
+  </body>
+    <!-- latest jquery-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!--javascript for searchable select -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
+<script>
+    $(document).ready(function(){
+        $(".class_label").select2();
+    });
+
+</script>
+
+</html>
